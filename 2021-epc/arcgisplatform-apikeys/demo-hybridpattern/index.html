@@ -1,1 +1,95 @@
 
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+    <title>Sample | Hybrid Pattern with ArcGIS Platform | ArcGIS API for JavaScript 4.19</title>
+
+    <style>
+      html,
+      body,
+      #viewDiv {
+        padding: 0;
+        margin: 0;
+        height: 100%;
+        width: 100%;
+      }
+    </style>
+
+    <link rel="stylesheet" href="https://jsdev.arcgis.com/4.19/esri/themes/light/main.css" />
+
+    <script src="https://jsdev.arcgis.com/4.19/"></script>
+    <link rel="stylesheet" href="https://s3-us-west-1.amazonaws.com/patterns.esri.com/files/calcite-web/1.1.0/css/calcite-web.min.css"/>
+
+    <script nomodule="" src="<path-to-calcite-components-package>/dist/calcite/calcite.js"></script>
+
+    <script>
+      require(["esri/views/MapView", "esri/WebMap","esri/widgets/Directions",
+        "esri/tasks/Locator"], function(MapView, WebMap, Directions, Locator) {
+        /************************************************************
+         * Creates a new WebMap instance. A WebMap must reference
+         * a PortalItem ID that represents a WebMap saved to
+         * arcgis.com or an on-premise portal.
+         *
+         * To load a WebMap from an on-premise portal, set the portal
+         * url with esriConfig.portalUrl.
+         ************************************************************/
+
+
+        var webmap = new WebMap({
+          portalItem: {
+            // autocasts as new PortalItem()
+            id: process.env.PORTAL-ITEM-ID
+          }
+        });
+
+        /************************************************************
+         * Set the WebMap instance to the map property in a MapView.
+         ************************************************************/
+        var view = new MapView({
+          map: webmap,
+          container: "viewDiv"
+        });
+        /************************************************************
+         * Use Directions widget for geocoding by creating a Locator. 
+         * The locator will use ArcGIS Geocoding Service and Routing Service using fine grained local API keys
+         ************************************************************/
+        let directionsWidget = new Directions({
+          view: view,
+          searchProperties: {
+            includeDefaultSources: false,
+            sources: [
+              {
+                name: "api key locator",
+                apiKey: process.env.GEOCODE-API-KEY-NAME,
+                locator: new Locator({
+                  url:
+                    "https://geocode-api.arcgis.com/arcgis/rest/services/World/GeocodeServer",
+                 
+                })
+              }
+            ]
+          },
+          routeServiceUrl:  "https://route-api.arcgis.com/arcgis/rest/services/World/Route/NAServer/Route_World",
+          apiKey: process.env.ROUTE-API-KEY-NAME,
+       
+        });
+
+        // Add the Directions widget to the top right corner of the view
+        view.ui.add(directionsWidget, {
+          position: "top-right"
+        });
+      });
+    </script>
+  </head>
+
+  <body>
+    <div class="panel panel-blue style="background-color:${blue}" position-type="top-left">
+      <h4 class="trailer-half">LA Metro App- Hybrid Pattern</h4>
+      <p class="trailer-0"></p>
+  
+    </div>
+    <div id="viewDiv"></div>
+  </body>
+</html>
