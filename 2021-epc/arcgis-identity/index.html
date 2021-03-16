@@ -73,7 +73,6 @@
 
             ], function(Map, MapView,Home,Locator,LocatorSearchSource,FeatureLayer,Search,Editor,OAuthInfo,esriId,Credential,Portal,portalUser,on,dom){
             
-            //esriConfig.apiKey = "AAPKe50a23723a5c4cbd988d9c116905127c3egeunfritDheMLV-v_rKIZ9CvfBkh41t6IR-DhjKJGbnvMYM2w18zpY5yiE0cPy";
                 
             var map = new Map({
                 basemap: "streets-navigation-vector",
@@ -83,11 +82,7 @@
             //added route layer to map
             });
 
-            // var webmap = new WebMap({
-            //  portalItem: {
-            //         id: "9a01127d8cf547e6a71ed7aaf7987bb9"
-            //     }
-            // });
+
 
             var view = new MapView({
                 container: "viewDiv",
@@ -107,7 +102,7 @@
                 view.ui.add(editor, "top-right");
 
             });
-
+            //Add secured feature layers
             var incidentsreported = new FeatureLayer({
                 url: "https://services.arcgis.com/q7zPNeKmTWeh7Aor/arcgis/rest/services/Incidents_Reported_Filter/FeatureServer/0",
                 popupEnabled:true
@@ -119,58 +114,26 @@
                 popupEnabled:true
 
             });
-
+           
+            //Add Widgets
             var hmbutton = new Home({
                 view: view
                 
             });
 
-            // var searchWidget = new Search({
-            //     view: view,
-            //     includeDefaultSources: false,
+
 
             var searchWidget = new Search({
                 view: view,
-                includeDefaultSources: false,
+                
+            });
                 
                 
-                sources: [
-
-                    {
-                        locator: new Locator({
-                        url: "https://utility.arcgis.com/usrsvcs/appservices/CPMVsuYM2rbRhwou/rest/services/World/GeocodeServer"
-                        }),
-                        name: "LocatorSearchSource",
-                        zoomScale: 50000,
-                        placeholder: "Search address or place",
-                        singleLineFieldName:"SingleLine",
-                        autoNavigate:true,
-                        popupEnabled: true,
-
-                        //apiKey:"AAPKf180a6e92a3f4657b3be84060c8cedd4eBcsW0BbsumIKYIHAul52BHirmMhmeBgXThdwhywFOluXB6QTfqakJN_g4av-8d0"
-                    }
-                ]
-            }); 
+              
         
             
-            // sources: [
 
-            //     {
-            //         locator: new Locator({
-            //         url: "https://utility.arcgis.com/usrsvcs/appservices/CPMVsuYM2rbRhwou/rest/services/World/GeocodeServer"
-            //         }),
-            //         name: "LocatorSearchSource",
-            //         zoomScale: 50000,
-            //         placeholder: "Search address or place",
-            //         singleLineFieldName:"SingleLine",
-            //         autoNavigate:true,
-            //         popupEnabled: true
-            //     }
-            //     ]
-           
-
-
-   
+            //Add the AppId and register the app for OAuth         
             var portalUrl = "https://www.arcgis.com/sharing";        
             var info = new OAuthInfo({
                 appId: "kquhmHhOVPbPhLHn",
@@ -178,19 +141,14 @@
 
             });
 
-            //console.log(info.appId)
-           // console.log(info)
             esriId.registerOAuthInfos([info]);
-            //var x= esriId.findCredential("http://localhost:8080")
 
             var portal = new Portal(); // Optionally, specify the url instead of the default www.arcgis.com
             portal.authMode = "immediate"; // Setting authMode to immediate signs the user in once loaded
             portal.load().then(function() {
                 console.log(portal);
 
-                // Create query parameters for the portal search
-                // This object autocasts as new PortalQueryParams()
- 
+             // Users - username and organization 
                 var user = portal.user.username;
                 var orgname = portal.name
                 document.getElementById("usr").innerHTML = user;
@@ -200,33 +158,22 @@
 
             });
             
-            // Load portal
-            // Once portal is loaded, user signed in
-             // Once portal is loaded, user signed in
-           
-            var x= esriId.getCredential("https://www.arcgis.com/sharing/oauth2/autorize")
-            //console.log(x)
-            
-          
+     
 
-            
-            //var id = esriId.toJSON()
-            
-            //var cred= id['credentials']
-            //console.log(cred)
 
             
             
 
                 
-
+            //Sign-out button for user to log out of the application
             on(dom.byId("sign-out"),"click",function(){
                 esriId.destroyCredentials();
                 window.location.reload();
                 window.location.replace("http://localhost:8081/Mainpage.html");
             });
 
-        
+            
+            //Add the feature layers and widgets to the map and mapview
     
             map.add(incidentsreported);
             map.add(incidentsclosed);
@@ -235,31 +182,7 @@
 
 
 
-    //         on(dom.byId("sign-in"), "click", function() {
-    //                 identityManager.getCredential(portalUrl);
-    //         });
-
-    //   // log out and reload
-    //         on(dom.byId("sign-out"), "click", function() {
-    //             identityManager.destroyCredentials();
-    //                 window.location.reload();
-    //         });
-
-    //         identityManager.checkSignInStatus(portalUrl).then(function() {
-    //         dom.byId('anonymousPanel').style.display = 'none';
-    //         dom.byId('personalizedPanel').style.display = 'block'
-    //         });
-            // document.getElementById("log-out").onclick = function changeContent() {
-            //     identityManager.destroyCredentials();
-            //     window.location.reload();
-            // function changecontent(){
-
-            //     document.getElementById("log-out").innerHTML = 
-            //     identityManager.getCredential(portalUrl);
-
-            // document.getElementById("viewDiv").onclick = function changeContent() {
-            //     identityManager.getCredential(portalUrl);
-
+  
 
 
             
@@ -272,19 +195,8 @@
         </script>
     </head>
     <body>
-    <!-- < <div class="panel-body">
-        <li>calcite-nav-top</li>
-        <li>calcite-layout-inline-left</li>
+ 
     
-    </div> -->
-
-
-
-            <!-- <button class="btn btn-clear margin-left-1" id="log-out" onClick="changeContent()" type="button">Log Out</button> 
-            <!-- <nav class="class-top-nav-list right" role="navigation" aria-labelledby="usernav"> -->
-            <!-- <a href="http://localhost:8081/Main%20page.html"><button type="button" class="btn btn-clear margin-left-1" >Log Out</button></a> 
-    
-            </nav> --> 
             <div id="container">
 
                 <div class="panel panel-blue style="background-color:${blue}"  position-type="top-left">
@@ -312,47 +224,14 @@
                 </div>
 
 
-            
-                        
-                
-                    
-                    <!-- <p>Username: <span id="usr"></span></p>
-                    <p>Organization: <span id="org"></span></p> -->
-                        
+
 
               
                 
             </div>
 
                 
-        
-        
 
-            
-        <!-- <div id="viewDiv">
-            <div class="panel">
-                <h4 class="avenir-bold">ArcGIS Identity</h4>
-                <p class="font-size-1">Username: <span id="usr"></span></p>
-                <p class="font-size-1">Organization: <span id="org"></span></p>
-                <p class="trailer-0"></p>
-                <button class="btn btn-clear margin-right-1" id="sign-out"  type="button">Sign Out</button>
-              </div>
-
-            <!-- <h2> -->
-                <!-- <div class="grid-container leader-1 "> 
-                  <main class="column-6  phone-column-11 tablet-column-1 pre-1 tablet-leader-10" role="main">
-                    <div  class="card card-bar-blue block trailer-1">
-                        <div class="card-content">
-    
-                            <h4 class="avenir-bold">ArcGIS Identity</h4>
-                            <p class="font-size-1">Username: <span id="usr"></span></p>
-                            <p class="font-size-1">Organization: <span id="org"></span></p>
-                            <p class="trailer-0"></p>
-                            <button class="btn btn-clear margin-right-1" id="sign-out"  type="button">Sign Out</button>
-                        </div>
-                    </div>
-                  </main>
-             </div>     -->
         
             
     
